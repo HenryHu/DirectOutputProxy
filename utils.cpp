@@ -4,6 +4,7 @@
 #include <string>
 #include <iostream>
 #include <ios>
+#include "types.h"
 
 void CHECK_ERROR(const std::string& message, HRESULT result) {
 	if (SUCCEEDED(result)) return;
@@ -29,12 +30,21 @@ void CHECK_ERROR(const std::string& message, HRESULT result) {
 }
 
 namespace direct_output_proxy {
-
-	std::wstring DevTypeToString(const GUID& dev_type) {
-		if (dev_type == DeviceType_X52Pro) {
-			return L"X52 Pro";
+	DeviceType DeviceTypeGuidToDeviceType(const GUID& guid) {
+		if (guid == DeviceType_X52Pro) {
+			return DeviceType::kX52Pro;
 		}
-		if (dev_type == DeviceType_Fip) {
+		if (guid == DeviceType_Fip) {
+			return DeviceType::kFip;
+		}
+		return DeviceType::kUnknown;
+	}
+
+	std::wstring DevTypeToString(const DeviceType dev_type) {
+		switch (dev_type) {
+		case DeviceType::kX52Pro:
+			return L"X52 Pro";
+		case DeviceType::kFip:
 			return L"Flight Instrument Panel";
 		}
 		return L"Unknown";

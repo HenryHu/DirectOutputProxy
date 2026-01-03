@@ -134,12 +134,14 @@
     <ClCompile Include="DirectOutputDevice.cpp" />
     <ClCompile Include="DirectOutputImpl.cpp" />
     <ClCompile Include="DirectOutputProxy.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\..\Program Files\Logitech\DirectOutput\SDK\Include\DirectOutput.h" />
     <ClInclude Include="DirectOutputDevice.h" />
     <ClInclude Include="DirectOutputImpl.h" />
+    <ClInclude Include="DirectOutputProxy.h" />
     <ClInclude Include="types.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

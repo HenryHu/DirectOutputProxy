@@ -3,6 +3,7 @@
 #include <Windows.h>
 
 #include "DirectOutput.h"
+#include "types.h"
 
 void CHECK_ERROR(const std::string& message, HRESULT result);
 
@@ -14,6 +15,7 @@ namespace direct_output_proxy {
 		SoftButton_Down,
 	};
 
-	std::wstring DevTypeToString(const GUID& dev_type);
+	DeviceType DeviceTypeGuidToDeviceType(const GUID& device_type);
+	std::wstring DevTypeToString(const DeviceType dev_type);
 	std::wstring ButtonToString(const DWORD button);
 }

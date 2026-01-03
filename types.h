@@ -20,4 +20,9 @@ namespace direct_output_proxy {
 		kBottomLine = 2,
 	};
 
+	enum class DeviceType {
+		kUnknown,
+		kX52Pro,
+		kFip,
+	};
 }

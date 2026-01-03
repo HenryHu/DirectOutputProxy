@@ -33,6 +33,10 @@ namespace direct_output_proxy {
 		void RegisterButtonCallback(ButtonEventCallback callback) {
 			button_callback_ = std::move(callback);
 		}
+
+		DeviceType GetType() {
+			return type_;
+		}
 	private:
 		HRESULT UpdatePage();
 
@@ -55,6 +59,7 @@ namespace direct_output_proxy {
 
 		CDirectOutput* direct_output_;
 		void* handle_;
+		DeviceType type_;
 		DWORD buttons_ = 0;
 		std::optional<DWORD> current_page_;
 

@@ -18,7 +18,8 @@ namespace direct_output_proxy {
 	void DirectOutputDevice::Init() {
 		GUID dev_type;
 		CHECK_ERROR("GetDeviceType", direct_output_->GetDeviceType(handle_, &dev_type));
-		std::wcerr << "Detected: " << DevTypeToString(dev_type) << std::endl;
+		type_ = DeviceTypeGuidToDeviceType(dev_type);
+		std::wcerr << "Detected: " << DevTypeToString(type_) << std::endl;
 
 		for (const auto& [page, data] : pages_) {
 			CHECK_ERROR("AddPage", direct_output_->AddPage(handle_, page, data.name.c_str(), page == 0 ? FLAG_SET_AS_ACTIVE : 0));
