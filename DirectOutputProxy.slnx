@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="DirectOutputProxy.vcxproj" Id="d887e67a-0d98-4838-87fa-8bb92faa6e38" />
+</Solution>
