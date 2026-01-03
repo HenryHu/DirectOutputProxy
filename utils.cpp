@@ -30,26 +30,26 @@ void CHECK_ERROR(const std::string& message, HRESULT result) {
 
 namespace direct_output_proxy {
 
-	std::string DevTypeToString(const GUID& dev_type) {
+	std::wstring DevTypeToString(const GUID& dev_type) {
 		if (dev_type == DeviceType_X52Pro) {
-			return "X52 Pro";
+			return L"X52 Pro";
 		}
 		if (dev_type == DeviceType_Fip) {
-			return "Flight Instrument Panel";
+			return L"Flight Instrument Panel";
 		}
-		return "Unknown";
+		return L"Unknown";
 	}
 
-	std::string ButtonToString(const DWORD button) {
+	std::wstring ButtonToString(const DWORD button) {
 		switch (button) {
 		case SoftButton_Select:
-			return "Select";
+			return L"Select";
 		case SoftButton_Up:
-			return "Up";
+			return L"Up";
 		case SoftButton_Down:
-			return "Down";
+			return L"Down";
 		default:
-			return "Button" + button;
+			return L"Button" + button;
 		}
 	}
 }

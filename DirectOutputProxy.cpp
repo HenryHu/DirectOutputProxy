@@ -40,11 +40,25 @@ namespace direct_output_proxy {
 			proxy->HandleNewDevice(device);
 		}
 
-		void HandleNewDevice(void* device) {
-			std::cout << "device: " << device << std::endl;
+		void HandleNewDevice(void* handle) {
+			std::cout << "device: " << handle << std::endl;
 
-			devices_.insert(std::make_pair(device, DirectOutputDevice(&direct_output_, device)));
-			devices_.at(device).Init();
+			devices_.insert(std::make_pair(handle, DirectOutputDevice(&direct_output_, handle)));
+
+			DirectOutputDevice& device = devices_.at(handle);
+			device.Init();
+
+			device.AddPage(0, {
+				.top = L"top1",
+				.middle = L"middle1",
+				.bottom = L"bottom1",
+				}, true);
+
+			device.AddPage(1, {
+				.top = L"top2",
+				.middle = L"middle2",
+				.bottom = L"bottom2",
+				}, false);
 		}
 
 		static void __stdcall DeviceCallback(void* device, bool added, void* param) {

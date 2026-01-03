@@ -14,6 +14,6 @@ namespace direct_output_proxy {
 		SoftButton_Down,
 	};
 
-	std::string DevTypeToString(const GUID& dev_type);
-	std::string ButtonToString(const DWORD button);
+	std::wstring DevTypeToString(const GUID& dev_type);
+	std::wstring ButtonToString(const DWORD button);
 }

@@ -2,7 +2,7 @@
 
 #include <string>
 #include <map>
-#include <intsafe.h>
+#include <Windows.h>
 
 namespace direct_output_proxy {
 	struct PageData {
@@ -13,4 +13,11 @@ namespace direct_output_proxy {
 	};
 
 	using PagesData = std::map<DWORD, PageData>;
+
+	enum LineIndex {
+		kTopLine = 0,
+		kMiddleLine = 1,
+		kBottomLine = 2,
+	};
+
 }

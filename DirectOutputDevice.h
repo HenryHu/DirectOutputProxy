@@ -4,6 +4,8 @@
 #include "DirectOutputImpl.h"
 #include "types.h"
 #include <optional>
+#include <string>
+#include "utils.h"
 
 namespace direct_output_proxy {
 	class DirectOutputDevice {
@@ -11,6 +13,19 @@ namespace direct_output_proxy {
 		DirectOutputDevice(CDirectOutput* direct_output, void* handle);
 
 		void Init();
+
+		// Adds a new page. Fails if the page already exists.
+		void AddPage(DWORD page, const PageData& data, bool activate);
+
+		// Updates an existing page. Fails if the page does not exist.
+		void SetPage(DWORD page, const PageData& data);
+
+		// Removes an existing page.
+		void RemovePage(DWORD page);
+
+		// Updates a line on a page.
+		void SetLine(DWORD page, LineIndex line, const std::wstring& content);
+
 	private:
 		HRESULT UpdatePage();
 
