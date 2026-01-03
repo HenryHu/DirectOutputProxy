@@ -62,12 +62,19 @@ namespace direct_output_proxy {
 	void DirectOutputDevice::HandleButtonCallback(const DWORD buttons) {
 		std::cout << "device: " << handle_ << " buttons: " << buttons << std::endl;
 
+		DWORD page = current_page_.has_value() ? current_page_.value() : -1;
+
 		for (const DWORD button : kButtons) {
 			if ((buttons & button) && !(buttons_ & button)) {
-				std::wcout << "Button " << ButtonToString(button) << " down on page " << (current_page_.has_value() ? current_page_.value() : -1) << std::endl;
-				SetLine(0, kTopLine, L"Button: " + ButtonToString(button));
+				std::wcout << "Button " << ButtonToString(button) << " down on page " << page << std::endl;
+				if (button_callback_) {
+					button_callback_(button, /*down=*/true, page);
+				}
 			} else if (!(buttons & button) && (buttons_ & button)) {
-				std::wcout << "Button " << ButtonToString(button) << " up on page " << (current_page_.has_value() ? current_page_.value() : -1) << std::endl;
+				std::wcout << "Button " << ButtonToString(button) << " up on page " << page << std::endl;
+				if (button_callback_) {
+					button_callback_(button, /*down=*/false, page);
+				}
 			}
 		}
 		buttons_ = buttons;

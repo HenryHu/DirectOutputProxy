@@ -6,6 +6,7 @@
 #include <map>
 #include <utility>
 #include <Windows.h>
+#include "types.h"
 
 namespace direct_output_proxy {
 	class DirectOutputProxy {
@@ -59,6 +60,11 @@ namespace direct_output_proxy {
 				.middle = L"middle2",
 				.bottom = L"bottom2",
 				}, false);
+
+			device.RegisterButtonCallback([&device](const DWORD button, const bool down, const DWORD page) {
+				if (!down) return;
+				device.SetLine(0, kTopLine, L"Button: " + ButtonToString(button));
+			});
 		}
 
 		static void __stdcall DeviceCallback(void* device, bool added, void* param) {

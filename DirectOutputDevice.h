@@ -5,9 +5,12 @@
 #include "types.h"
 #include <optional>
 #include <string>
-#include "utils.h"
+#include <functional>
+#include <utility>
 
 namespace direct_output_proxy {
+	using ButtonEventCallback = std::function<void(DWORD button, bool down, DWORD page)>;
+
 	class DirectOutputDevice {
 	public:
 		DirectOutputDevice(CDirectOutput* direct_output, void* handle);
@@ -26,6 +29,10 @@ namespace direct_output_proxy {
 		// Updates a line on a page.
 		void SetLine(DWORD page, LineIndex line, const std::wstring& content);
 
+		// Registers a callback which is called if there's a button event.
+		void RegisterButtonCallback(ButtonEventCallback callback) {
+			button_callback_ = std::move(callback);
+		}
 	private:
 		HRESULT UpdatePage();
 
@@ -52,5 +59,6 @@ namespace direct_output_proxy {
 		std::optional<DWORD> current_page_;
 
 		PagesData pages_;
+		ButtonEventCallback button_callback_;
 	};
 }
