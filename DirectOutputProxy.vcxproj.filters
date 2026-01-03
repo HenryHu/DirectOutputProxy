@@ -50,5 +50,8 @@
     <ClInclude Include="DirectOutputProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\..\Program Files\Crow 1.3.0\include\crow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

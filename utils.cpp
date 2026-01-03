@@ -5,6 +5,8 @@
 #include <iostream>
 #include <ios>
 #include "types.h"
+#include <cstdlib>
+#include <optional>
 
 void CHECK_ERROR(const std::string& message, HRESULT result) {
 	if (SUCCEEDED(result)) return;
@@ -61,5 +63,16 @@ namespace direct_output_proxy {
 		default:
 			return L"Button" + button;
 		}
+	}
+
+	std::optional<std::string> WstrToStr(const std::wstring& wstr) {
+		char buf[1024];
+		if (wcstombs_s(nullptr, buf, sizeof(buf), wstr.c_str(), sizeof(buf) - 1) != 0) return std::nullopt;
+		return std::string(buf);
+	}
+
+	std::string WstrToStrOrDie(const std::wstring& wstr) {
+		std::optional<std::string> ret = WstrToStr(wstr);
+		return ret.value();
 	}
 }
