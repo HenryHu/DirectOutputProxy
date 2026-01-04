@@ -23,18 +23,16 @@ std::optional<std::wstring> GetParam(const crow::request& req, const std::string
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
 	crow::SimpleApp app;
 	direct_output_proxy::DirectOutputProxy proxy;
-	if (!proxy.Init()) return 1;
-
-	direct_output_proxy::DirectOutputDevice* device = proxy.GetDeviceByType(direct_output_proxy::DeviceType::kX52Pro);
-	if (device == nullptr) return 2;
-
-	device->AddPage(0, { .name = L"info", .top = L"info", }, true);
-	device->AddPage(1, { .name = L"debug", .top = L"debug", }, false);
-
-	device->RegisterButtonCallback([device](const DWORD button, const bool down, const DWORD page) {
-		if (!down) return;
-		device->SetLine(1, direct_output_proxy::kTopLine, L"Button: " + direct_output_proxy::ButtonToString(button));
+	proxy.RegisterNewDeviceCallback([](direct_output_proxy::DirectOutputDevice& device) {
+		if (device.GetType() != direct_output_proxy::DeviceType::kX52Pro) return;
+		device.AddPage(0, { .name = L"info", .top = L"info", }, true);
+		device.AddPage(1, { .name = L"debug", .top = L"debug", }, false);
+		device.RegisterButtonCallback([&device](const DWORD button, const bool down, const DWORD page) {
+			if (!down) return;
+			device.SetLine(1, direct_output_proxy::kMiddleLine, L"Button: " + direct_output_proxy::ButtonToString(button));
+		});
 	});
+	if (!proxy.Init()) return 1;
 
 	CROW_ROUTE(app, "/addpage/<int>/<int>")([&proxy](const crow::request& req, const int page, const int activate) {
 		direct_output_proxy::DirectOutputDevice* device = proxy.GetDeviceByType(direct_output_proxy::DeviceType::kX52Pro);

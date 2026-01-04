@@ -28,7 +28,7 @@ namespace direct_output_proxy {
 			}
 
 			CHECK_ERROR("Enumerate", direct_output_.Enumerate(&EnumerateCallback, this));
-			CHECK_ERROR("RegisterDeviceCallback", direct_output_.RegisterDeviceCallback(&DeviceCallback, this));
+			CHECK_ERROR("RegisterDeviceCallback", direct_output_.RegisterDeviceCallback(&RawDeviceCallback, this));
 			return true;
 		}
 
@@ -53,6 +53,14 @@ namespace direct_output_proxy {
 				callback(device);
 			}
 		}
+
+		void RegisterNewDeviceCallback(DeviceCallback callback) {
+			new_device_cb_ = std::move(callback);
+		}
+
+		void RegisterDeviceGoneCallback(DeviceCallback callback) {
+			device_gone_cb_ = std::move(callback);
+		}
 	private:
 		static void __stdcall EnumerateCallback(void* device, void* param) {
 			DirectOutputProxy* proxy = (DirectOutputProxy*)param;
@@ -66,9 +74,10 @@ namespace direct_output_proxy {
 
 			DirectOutputDevice& device = devices_.at(handle);
 			device.Init();
+			if (new_device_cb_) new_device_cb_(device);
 		}
 
-		static void __stdcall DeviceCallback(void* device, bool added, void* param) {
+		static void __stdcall RawDeviceCallback(void* device, bool added, void* param) {
 			DirectOutputProxy* proxy = (DirectOutputProxy*)param;
 			proxy->HandleDeviceCallback(device, added);
 		}
@@ -79,11 +88,14 @@ namespace direct_output_proxy {
 			if (added) {
 				HandleNewDevice(device);
 			} else {
+				if (device_gone_cb_ && devices_.contains(device)) device_gone_cb_(devices_.at(device));
 				devices_.erase(device);
 			}
 		}
 
 		CDirectOutput direct_output_;
 		std::map<void*, DirectOutputDevice> devices_;
+
+		DeviceCallback new_device_cb_, device_gone_cb_;
 	};
 }
