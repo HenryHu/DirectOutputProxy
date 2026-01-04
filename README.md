@@ -16,7 +16,7 @@ Incomplete support:
 
 Run the app. It'll run in the background.
 
-Access its services through its web API. By default it listens on port 8080.
+Access its services through its web API. By default it listens on port 8080. Port can be specified on the command line.
 
 The default page shows the current status, including the devices recognized and their configuration.
 

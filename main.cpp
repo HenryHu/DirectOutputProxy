@@ -6,6 +6,7 @@
 #include <optional>
 
 #include <Windows.h>
+#include <shellapi.h>
 #include "DirectOutputProxy.h"
 #include "DirectOutputDevice.h"
 #include "types.h"
@@ -20,7 +21,10 @@ std::optional<std::wstring> GetParam(const crow::request& req, const std::string
 	return wcontent;
 }
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR lpCmdLine, int nShowCmd) {
+	int argc;
+	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
+
 	crow::SimpleApp app;
 	direct_output_proxy::DirectOutputProxy proxy;
 	proxy.RegisterNewDeviceCallback([](direct_output_proxy::DirectOutputDevice& device) {
@@ -93,7 +97,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return "ok";
 	});
 
-	app.port(8080).run();
+	int port = 8080;
+	if (argc > 1) {
+		port = std::stoi(argv[1]);
+	}
+	app.port(port).run();
 
 	if (!proxy.Shutdown()) return 1;
 	return 0;
