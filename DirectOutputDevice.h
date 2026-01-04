@@ -37,6 +37,8 @@ namespace direct_output_proxy {
 		DeviceType GetType() {
 			return type_;
 		}
+
+		std::wstring GetInfo();
 	private:
 		HRESULT UpdatePage();
 
@@ -57,9 +59,9 @@ namespace direct_output_proxy {
 		// `buttons` contains the currently pressed buttons.
 		void HandleButtonCallback(const DWORD buttons);
 
-		CDirectOutput* direct_output_;
-		void* handle_;
-		DeviceType type_;
+		CDirectOutput* direct_output_ = nullptr;
+		void* handle_ = nullptr;
+		DeviceType type_ = DeviceType::kUnknown;
 		DWORD buttons_ = 0;
 		std::optional<DWORD> current_page_;
 

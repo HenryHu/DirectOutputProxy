@@ -1,16 +1,19 @@
 #include <iostream>
 #include <map>
+#include <ios>
+#include <functional>
 #include <utility>
 
 #include <Windows.h>
 
-#include "DirectOutputDevice.h"
 #include "DirectOutputImpl.h"
+#include "DirectOutputDevice.h"
 #include "utils.h"
 #include "types.h"
 
-#include <ios>
 namespace direct_output_proxy {
+	using DeviceCallback = std::function<void(DirectOutputDevice& device)>;
+
 	class DirectOutputProxy {
 	public:
 		bool Init() {
@@ -43,6 +46,12 @@ namespace direct_output_proxy {
 				if (device.GetType() == dev_type) return &device;
 			}
 			return nullptr;
+		}
+
+		void ApplyToDevices(DeviceCallback callback) {
+			for (auto& [handle, device] : devices_) {
+				callback(device);
+			}
 		}
 	private:
 		static void __stdcall EnumerateCallback(void* device, void* param) {

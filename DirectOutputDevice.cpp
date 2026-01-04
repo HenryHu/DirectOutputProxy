@@ -121,4 +121,21 @@ namespace direct_output_proxy {
 		}
 		UpdatePage();
 	}
+
+	std::wstring DirectOutputDevice::GetInfo() {
+		std::wstring info = L"device type: " + DevTypeToString(type_);
+		info += L"\npages: " + std::to_wstring(pages_.size());
+		for (const auto& [page, data] : pages_) {
+			info += L"\npage " + std::to_wstring(page) + L": '" + data.top + L"', '" + data.middle + L"', '" + data.bottom + L"'";
+			if (page == current_page_) {
+				info += L" [current]";
+			}
+		}
+		if (current_page_.has_value()) {
+			info += L"\nCurrent page: " + std::to_wstring(current_page_.value());
+		} else {
+			info += L"\nCurrent page: mode";
+		}
+		return info;
+	}
 }

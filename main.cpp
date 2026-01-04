@@ -79,15 +79,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	});
 
 	CROW_ROUTE(app, "/")([&proxy]() {
-		std::string response = "DirectOutputProxy running\n";
-		for (const auto device_type : { direct_output_proxy::DeviceType::kX52Pro, direct_output_proxy::DeviceType::kFip }) {
-			direct_output_proxy::DirectOutputDevice* device = proxy.GetDeviceByType(device_type);
-			if (device != nullptr) {
-				response += direct_output_proxy::WstrToStrOrDie(direct_output_proxy::DevTypeToString(device_type)) + " found\n";
+		std::string resp = "DirectOutputProxy running\n";
+		proxy.ApplyToDevices([&resp](direct_output_proxy::DirectOutputDevice& device) {
+			std::optional<std::string> info = direct_output_proxy::WstrToStr(device.GetInfo());
+			if (info.has_value()) {
+				resp += info.value();
 			}
-		}
+		});
 
-		return crow::response(200, response);
+		return crow::response(200, resp);
 	});
 
 	CROW_ROUTE(app, "/exit")([&app]() {
