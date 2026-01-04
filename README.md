@@ -47,3 +47,22 @@ The app provides a simple HTTP-based API. Available methods:
 * `/exit`
 
   Terminates the app.
+
+## Runtime Dependency
+
+The X52 Pro driver should be installed first. This app depends on the DirectOutput library it installs.
+
+This installation should install the DirectOutput library into `C:\Program Files\Logitech\DirectOutput`.
+In addition, it should set the library path in the Registry, at `HKEY_LOCAL_MACHINE\SOFTWARE\Saitek\DirectOutput`.
+Notice that it sets the path in the `DirectOutput_Saitek` key. The example in the SDK uses the `DirectOutput` key, so if the DLL is not found, check if the key is right.
+
+## Build Dependency
+
+This project has a few dependencies:
+* DirectOutput SDK, installed into  `C:\Program Files\Logitech\DirectOutput\SDK` by default.
+* Crow (https://github.com/CrowCpp/Crow)
+* Asio (Crow depends on it, https://think-async.com/Asio/)
+
+Their include directories should be added to 'External include directories'.
+
+Also, check the documentations in the DirectOutput SDK directory.
