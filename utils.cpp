@@ -7,31 +7,55 @@
 #include "types.h"
 #include <cstdlib>
 #include <optional>
-
-void CHECK_ERROR(const std::string& message, HRESULT result) {
-	if (SUCCEEDED(result)) return;
-
-	std::cerr << "Failed: " << message << ' ';
-	switch (result) {
-	case E_PAGENOTACTIVE:
-		std::cerr << "Page not active";
-		break;
-	case E_INVALIDARG:
-		std::cerr << "Invalid argument";
-		break;
-	case E_OUTOFMEMORY:
-		std::cerr << "Out of memory";
-		break;
-	case E_HANDLE:
-		std::cerr << "Invalid handle";
-		break;
-	default:
-		std::cerr << std::hex << result;
-	}
-	std::cerr << std::endl;
-}
+#include <sstream>
 
 namespace direct_output_proxy {
+	void ReportError(const std::wstring& message) {
+		MessageBoxW(0, message.c_str(), L"Error", MB_OK | MB_ICONERROR);
+	}
+
+	void ReportError(const std::string& message) {
+		MessageBoxA(0, message.c_str(), "Error", MB_OK | MB_ICONERROR);
+	}
+
+	std::string ResultToString(const HRESULT result) {
+		switch (result) {
+		case S_OK:
+			return "OK";
+		case E_PAGENOTACTIVE:
+			return "Page not active";
+		case E_INVALIDARG:
+			return "Invalid argument";
+		case E_OUTOFMEMORY:
+			return "Out of memory";
+		case E_HANDLE:
+			return "Invalid handle";
+		case -ERROR_ALREADY_EXISTS:
+			return "Already exists";
+		case -ERROR_NOT_FOUND:
+			return "Not Found";
+		default:
+			std::stringstream ss;
+			ss << std::hex << result;
+			return ss.str();
+		}
+	}
+
+	HRESULT CHECK_ERROR(const std::string& context, HRESULT result) {
+		if (SUCCEEDED(result)) return result;
+
+		std::stringstream ss;
+		ss << "Failed: " << context << ' ' << ResultToString(result) << std::endl;
+		std::string msg = ss.str();
+
+#ifdef _CONSOLE
+		std::cerr << msg;
+#else
+		ReportError(msg);
+#endif
+		return result;
+	}
+
 	DeviceType DeviceTypeGuidToDeviceType(const GUID& guid) {
 		if (guid == DeviceType_X52Pro) {
 			return DeviceType::kX52Pro;
@@ -74,5 +98,28 @@ namespace direct_output_proxy {
 	std::string WstrToStrOrDie(const std::wstring& wstr) {
 		std::optional<std::string> ret = WstrToStr(wstr);
 		return ret.value();
+	}
+
+	std::wostream& DebugW() {
+		return std::wcerr;
+	}
+
+	std::ostream& Debug() {
+		return std::cerr;
+	}
+
+	int ConvertHresultToHttpCode(const HRESULT result) {
+		switch (result) {
+		case -ERROR_NOT_FOUND:
+			return 404;
+		case -ERROR_ALREADY_EXISTS:
+			return 409;
+		case E_INVALIDARG:
+			return 400;
+		case E_OUTOFMEMORY:
+			return 413;
+		default:
+			return 500;
+		}
 	}
 }

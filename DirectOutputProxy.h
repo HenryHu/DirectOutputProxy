@@ -1,6 +1,4 @@
-#include <iostream>
 #include <map>
-#include <ios>
 #include <functional>
 #include <utility>
 
@@ -20,22 +18,21 @@ namespace direct_output_proxy {
 			HRESULT status = direct_output_.Initialize(L"DirectOutputProxy");
 			if (FAILED(status)) {
 				if (status == E_NOTIMPL) {
-					std::cerr << "Failed to initialize: DLL failed to load, maybe missing from Registry; check HKLM\\SOFTWARE\\Saitek\\DirectOutput\\DirectOutput_Saitek";
+					ReportError("Failed to initialize: DLL failed to load, maybe missing from Registry; check HKLM\\SOFTWARE\\Saitek\\DirectOutput\\DirectOutput_Saitek");
 				} else {
-					std::cerr << "Failed to initialize: " << std::hex << status << std::endl;
+					CHECK_ERROR("initialize", status);
 				}
 				return false;
 			}
 
-			CHECK_ERROR("Enumerate", direct_output_.Enumerate(&EnumerateCallback, this));
-			CHECK_ERROR("RegisterDeviceCallback", direct_output_.RegisterDeviceCallback(&RawDeviceCallback, this));
-			return true;
+			return CHECK_ERROR("Enumerate", direct_output_.Enumerate(&EnumerateCallback, this)) == S_OK &&
+				CHECK_ERROR("RegisterDeviceCallback", direct_output_.RegisterDeviceCallback(&RawDeviceCallback, this)) == S_OK;
 		}
 
 		bool Shutdown() {
 			HRESULT status = direct_output_.Deinitialize();
 			if (FAILED(status)) {
-				std::cerr << "Failed to deinitialize: " << status << std::endl;
+				CHECK_ERROR("deinitialize", status);
 				return false;
 			}
 			return true;
@@ -68,7 +65,7 @@ namespace direct_output_proxy {
 		}
 
 		void HandleNewDevice(void* handle) {
-			std::cout << "device: " << handle << std::endl;
+			Debug() << "device: " << handle << std::endl;
 
 			devices_.insert(std::make_pair(handle, DirectOutputDevice(&direct_output_, handle)));
 
@@ -83,7 +80,7 @@ namespace direct_output_proxy {
 		}
 
 		void HandleDeviceCallback(void* device, bool added) {
-			std::cout << "device: " << device << " " << (added ? "added" : "removed") << std::endl;
+			Debug() << "device: " << device << " " << (added ? "added" : "removed") << std::endl;
 
 			if (added) {
 				HandleNewDevice(device);

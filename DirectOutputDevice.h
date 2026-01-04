@@ -15,19 +15,19 @@ namespace direct_output_proxy {
 	public:
 		DirectOutputDevice(CDirectOutput* direct_output, void* handle);
 
-		void Init();
+		HRESULT Init();
 
 		// Adds a new page. Fails if the page already exists.
-		void AddPage(DWORD page, const PageData& data, bool activate);
+		HRESULT AddPage(DWORD page, const PageData& data, bool activate);
 
 		// Updates an existing page. Fails if the page does not exist.
-		void SetPage(DWORD page, const PageData& data);
+		HRESULT SetPage(DWORD page, const PageData& data);
 
 		// Removes an existing page.
-		void RemovePage(DWORD page);
+		HRESULT RemovePage(DWORD page);
 
 		// Updates a line on a page.
-		void SetLine(DWORD page, LineIndex line, const std::wstring& content);
+		HRESULT SetLine(DWORD page, LineIndex line, const std::wstring& content);
 
 		// Registers a callback which is called if there's a button event.
 		void RegisterButtonCallback(ButtonEventCallback callback) {
